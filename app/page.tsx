@@ -19,6 +19,13 @@ export default function Home() {
 
       <div className="w-full max-w-xs space-y-4">
         <button
+          onClick={() => router.push("/pre-test")}
+          className="w-full py-4 bg-blue-400 hover:bg-blue-500 text-white rounded-2xl text-lg font-bold shadow transition-all active:scale-95"
+        >
+          📝 课前测验
+          <span className="block text-sm font-normal opacity-80 mt-0.5">上课前在家完成</span>
+        </button>
+        <button
           onClick={() => router.push("/challenge")}
           className="w-full py-4 bg-orange-400 hover:bg-orange-500 text-white rounded-2xl text-lg font-bold shadow transition-all active:scale-95"
         >
