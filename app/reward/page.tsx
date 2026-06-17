@@ -8,12 +8,10 @@ function RewardContent() {
   const router = useRouter();
 
   const l1 = params.get("l1") === "1";
-  const l1a = parseInt(params.get("l1a") ?? "0");
-  const l2 = parseInt(params.get("l2") ?? "0");
+  const l2done = params.get("l2done") === "1";
   const l3 = params.get("l3") === "1";
-  const l3a = parseInt(params.get("l3a") ?? "0");
 
-  const passedCount = [l1, l2 >= 2, l3].filter(Boolean).length;
+  const passedCount = [l1, l2done, l3].filter(Boolean).length;
   const medal =
     passedCount === 3
       ? MEDALS.allCorrect
@@ -48,17 +46,19 @@ function RewardContent() {
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-600">🪄 第一关·衣柜换新衣</span>
           <span className={`text-sm font-bold ${l1 ? "text-green-500" : "text-red-400"}`}>
-            {l1 ? `通过（${l1a}次）` : "未通过"}
+            {l1 ? "已通过" : "未通过"}
           </span>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-600">⚡ 第二关·PK知识达人</span>
-          <span className="text-sm font-bold text-orange-500">{l2} / 3 分</span>
+          <span className={`text-sm font-bold ${l2done ? "text-green-500" : "text-red-400"}`}>
+            {l2done ? "已通过" : "未通过"}
+          </span>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-600">🏆 第三关·领奖台涂色</span>
           <span className={`text-sm font-bold ${l3 ? "text-green-500" : "text-red-400"}`}>
-            {l3 ? `通过（${l3a}次）` : "未通过"}
+            {l3 ? "已通过" : "未通过"}
           </span>
         </div>
       </div>

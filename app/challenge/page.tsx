@@ -1,9 +1,10 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { LEVEL1_QUESTION, LEVEL3_QUESTION, PK_QUESTIONS } from "@/lib/questions";
-import type { PKQuestion } from "@/lib/questions";
-import Level3Demo from "@/components/Level3Demo";
+import { LEVEL1_QUESTION } from "@/lib/questions";
+import Level2Game from "@/components/Level2Game";
+import Level3Challenge from "@/components/Level3Challenge";
+import PhotoUpload from "@/components/PhotoUpload";
 
 type Level = "level1" | "level2" | "level3" | "done";
 
@@ -31,21 +32,12 @@ export default function ChallengePage() {
   const [l1Attempts, setL1Attempts] = useState(0);
   const [l1Passed, setL1Passed] = useState(false);
   const [l1Loading, setL1Loading] = useState(false);
-
-  const [pkUsedIds, setPkUsedIds] = useState<number[]>([]);
-  const [pkQuestion, setPkQuestion] = useState<PKQuestion | null>(null);
-  const [pkShowAnswer, setPkShowAnswer] = useState(false);
-  const [pkScore, setPkScore] = useState(0);
-  const [pkFinished, setPkFinished] = useState(false);
-  const [pkLoading, setPkLoading] = useState(false);
-
-  const [l3Input, setL3Input] = useState("");
-  const [l3Reply, setL3Reply] = useState("");
-  const [l3Attempts, setL3Attempts] = useState(0);
-  const [l3Passed, setL3Passed] = useState(false);
-  const [l3Loading, setL3Loading] = useState(false);
-  const [showDemo, setShowDemo] = useState(false);
   const [l1Method, setL1Method] = useState<0 | 1>(0);
+
+  const [l2Done, setL2Done] = useState(false);
+  const [l2Score, setL2Score] = useState(0);
+
+  const [l3Passed, setL3Passed] = useState(false);
 
   const submitLevel1 = async () => {
     if (!l1Input.trim() || l1Loading) return;
@@ -71,73 +63,25 @@ export default function ChallengePage() {
     }
   };
 
-  const fetchPkQuestion = async () => {
-    setPkShowAnswer(false);
-    setPkLoading(true);
-    try {
-      const res = await fetch("/api/quiz", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ usedIds: pkUsedIds }),
-      });
-      const data = await res.json();
-      if (data.finished) {
-        setPkFinished(true);
-        setResult((r) => ({ ...r, level2Score: pkScore }));
-      } else {
-        setPkQuestion(data.question);
-        setPkUsedIds((prev) => [...prev, data.question.id]);
-      }
-    } catch {
-      // ignore
-    } finally {
-      setPkLoading(false);
-    }
+  const handleLevel2Done = (scoreA: number, scoreB: number) => {
+    setL2Done(true);
+    setL2Score(Math.max(scoreA, scoreB));
+    setResult((r) => ({ ...r, level2Score: Math.max(scoreA, scoreB) }));
   };
 
-  const revealPkAnswer = () => {
-    setPkShowAnswer(true);
-    setPkScore((s) => s + 1);
-  };
-
-  const submitLevel3 = async () => {
-    if (!l3Input.trim() || l3Loading) return;
-    setL3Loading(true);
-    const attempts = l3Attempts + 1;
-    setL3Attempts(attempts);
-    try {
-      const res = await fetch("/api/judge-level3", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ studentAnswer: l3Input, isSecondAttempt: attempts > 1 }),
-      });
-      const data = await res.json();
-      setL3Reply(data.reply || "收到你的答案了！");
-      if (data.isCorrect) {
-        setL3Passed(true);
-        setResult((r) => ({ ...r, level3Passed: true, level3Attempts: attempts }));
-      }
-    } catch {
-      setL3Reply("网络不太好，再试一次吧！");
-    } finally {
-      setL3Loading(false);
-    }
-  };
 
   const finishAll = () => {
     const params = new URLSearchParams({
-      l1: result.level1Passed || l1Passed ? "1" : "0",
-      l1a: String(result.level1Attempts || l1Attempts),
-      l2: String(pkScore),
-      l3: result.level3Passed || l3Passed ? "1" : "0",
-      l3a: String(result.level3Attempts || l3Attempts),
+      l1: l1Passed ? "1" : "0",
+      l2done: l2Done ? "1" : "0",
+      l3: l3Passed ? "1" : "0",
     });
     router.push(`/reward?${params.toString()}`);
   };
 
   const levelTabs = [
     { key: "level1" as Level, label: "第一关", icon: "🪄", done: l1Passed },
-    { key: "level2" as Level, label: "第二关", icon: "⚡", done: pkFinished },
+    { key: "level2" as Level, label: "第二关", icon: "⚡", done: l2Done },
     { key: "level3" as Level, label: "第三关", icon: "🏆", done: l3Passed },
   ];
 
@@ -273,154 +217,61 @@ export default function ChallengePage() {
             )}
 
             {!l1Passed && (
-              <div className="flex gap-3">
-                <input
-                  value={l1Input}
-                  onChange={(e) => setL1Input(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && submitLevel1()}
-                  placeholder="输入你的答案"
-                  className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-orange-400"
+              <>
+                <div className="flex gap-3">
+                  <input
+                    value={l1Input}
+                    onChange={(e) => setL1Input(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && submitLevel1()}
+                    placeholder="输入你的答案"
+                    className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-orange-400"
+                  />
+                  <button
+                    onClick={submitLevel1}
+                    disabled={l1Loading || !l1Input.trim()}
+                    className="px-5 py-2.5 bg-orange-400 hover:bg-orange-500 disabled:opacity-40 text-white rounded-xl text-sm font-medium"
+                  >
+                    {l1Loading ? "..." : "提交"}
+                  </button>
+                </div>
+                <PhotoUpload
+                  level="level1"
+                  isSecondAttempt={l1Attempts > 1}
+                  onLevel1Result={(isCorrect, reply) => {
+                    setL1Reply(reply);
+                    setL1Attempts((a) => a + 1);
+                    if (isCorrect) {
+                      setL1Passed(true);
+                      setResult((r) => ({ ...r, level1Passed: true }));
+                    }
+                  }}
+                  disabled={l1Passed}
                 />
-                <button
-                  onClick={submitLevel1}
-                  disabled={l1Loading || !l1Input.trim()}
-                  className="px-5 py-2.5 bg-orange-400 hover:bg-orange-500 disabled:opacity-40 text-white rounded-xl text-sm font-medium"
-                >
-                  {l1Loading ? "..." : "提交"}
-                </button>
-              </div>
+              </>
             )}
           </div>
         )}
 
         {/* ── 第二关 ── */}
-        {level === "level2" && (
-          <div className="space-y-4">
-            <div className="bg-white rounded-2xl p-4 shadow-sm">
-              <div className="flex items-center justify-between mb-1">
-                <span className="bg-yellow-100 text-yellow-600 text-xs font-bold px-3 py-1 rounded-full">
-                  ⚡ 第二关
-                </span>
-                <span className="text-orange-500 font-bold text-sm">积分：{pkScore} 分</span>
-              </div>
-              <p className="text-gray-500 text-sm mt-2">PK知识小达人 · 共3题随机抢答</p>
-            </div>
-
-            {!pkQuestion && !pkFinished && (
-              <button
-                onClick={fetchPkQuestion}
-                disabled={pkLoading}
-                className="w-full py-5 bg-yellow-400 hover:bg-yellow-500 text-white rounded-2xl text-lg font-bold shadow transition-all"
-              >
-                {pkLoading ? "出题中..." : "⚡ 开始出题！"}
-              </button>
-            )}
-
-            {pkQuestion && !pkFinished && (
-              <div className="space-y-3">
-                <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-xs bg-yellow-200 text-yellow-700 px-2 py-0.5 rounded-full">
-                      {pkQuestion.category}
-                    </span>
-                    <span className="text-xs text-gray-400">第 {pkUsedIds.length} 题 / 共3题</span>
-                  </div>
-                  <p className="text-gray-800 font-medium text-base leading-relaxed">
-                    {pkQuestion.question}
-                  </p>
-                </div>
-
-                {pkShowAnswer && (
-                  <div className="bg-green-50 border border-green-200 rounded-2xl p-4">
-                    <p className="text-green-700 font-bold">✅ {pkQuestion.answer}</p>
-                    <p className="text-gray-600 text-sm mt-1">{pkQuestion.solution}</p>
-                  </div>
-                )}
-
-                <div className="flex gap-3">
-                  {!pkShowAnswer && (
-                    <button
-                      onClick={revealPkAnswer}
-                      className="flex-1 py-3 bg-green-500 text-white rounded-xl font-medium"
-                    >
-                      公布答案 +1分
-                    </button>
-                  )}
-                  {pkUsedIds.length < 3 ? (
-                    <button
-                      onClick={fetchPkQuestion}
-                      disabled={pkLoading}
-                      className="flex-1 py-3 bg-yellow-400 text-white rounded-xl font-medium"
-                    >
-                      {pkLoading ? "..." : "下一题 →"}
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => {
-                        setPkFinished(true);
-                        setResult((r) => ({ ...r, level2Score: pkScore }));
-                      }}
-                      className="flex-1 py-3 bg-orange-400 text-white rounded-xl font-medium"
-                    >
-                      完成PK ✓
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {pkFinished && (
-              <div className="bg-green-50 border border-green-200 rounded-2xl p-4 text-center">
-                <p className="text-2xl mb-1">⚡</p>
-                <p className="text-green-700 font-bold">第二关完成！得了 {pkScore} 分</p>
-                <button
-                  onClick={() => setLevel("level3")}
-                  className="mt-3 px-6 py-2 bg-orange-400 text-white rounded-xl text-sm font-medium"
-                >
-                  进入第三关 →
-                </button>
-              </div>
-            )}
-          </div>
-        )}
+        {level === "level2" && <Level2Game onDone={handleLevel2Done} onNextLevel={() => setLevel("level3")} />}
 
         {/* ── 第三关 ── */}
         {level === "level3" && (
           <div className="space-y-4">
-            <div className="bg-white rounded-2xl p-4 shadow-sm">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="bg-purple-100 text-purple-600 text-xs font-bold px-3 py-1 rounded-full">
-                  🏆 第三关
-                </span>
-                <span className="text-gray-500 text-sm">领奖台涂色</span>
-              </div>
-              <p className="text-gray-800 text-sm leading-relaxed">
-                {LEVEL3_QUESTION.description}
-              </p>
-              <p className="text-blue-500 text-xs mt-2 cursor-pointer hover:text-blue-600 underline" onClick={() => setShowDemo(!showDemo)}>
-                💡 {LEVEL3_QUESTION.geogebraHint}
-              </p>
-            </div>
-
-            {showDemo && <Level3Demo />}
-
-            {l3Reply && (
-              <div className="flex gap-3">
-                <img
-                  src="/fangfang.png"
-                  alt="方方"
-                  className="w-9 h-9 rounded-xl flex-shrink-0 object-cover shadow-sm"
-                />
-                <div className="bg-white rounded-2xl px-4 py-3 text-sm text-gray-800 shadow-sm whitespace-pre-wrap flex-1">
-                  {l3Reply}
-                </div>
-              </div>
-            )}
-
+            <Level3Challenge
+              onPass={() => {
+                setL3Passed(true);
+                setResult((r) => ({ ...r, level3Passed: true }));
+              }}
+            />
+            {/* 三关全部完成 */}
             {l3Passed && (
               <div className="bg-green-50 border border-green-200 rounded-2xl p-4 text-center">
                 <p className="text-2xl mb-1">🏆</p>
-                <p className="text-green-700 font-bold">第三关通过！三关全部完成！</p>
+                <p className="text-green-700 font-bold">三关全部完成！</p>
+                <p className="text-gray-500 text-xs mt-1">
+                  第一关：{l1Passed ? "✅" : "❌"}　第二关：✅　第三关：✅
+                </p>
                 <button
                   onClick={finishAll}
                   className="mt-3 px-6 py-2 bg-orange-400 text-white rounded-xl text-sm font-medium"
@@ -429,26 +280,6 @@ export default function ChallengePage() {
                 </button>
               </div>
             )}
-
-            {!l3Passed && (
-              <div className="flex gap-3">
-                <input
-                  value={l3Input}
-                  onChange={(e) => setL3Input(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && submitLevel3()}
-                  placeholder="输入你的答案"
-                  className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-purple-400"
-                />
-                <button
-                  onClick={submitLevel3}
-                  disabled={l3Loading || !l3Input.trim()}
-                  className="px-5 py-2.5 bg-purple-500 hover:bg-purple-600 disabled:opacity-40 text-white rounded-xl text-sm font-medium"
-                >
-                  {l3Loading ? "..." : "提交"}
-                </button>
-              </div>
-            )}
-
             {!l3Passed && (
               <button
                 onClick={finishAll}
