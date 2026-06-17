@@ -31,7 +31,7 @@ export default function HomeworkPage() {
     return (
       <main className="min-h-screen bg-gradient-to-b from-green-50 to-white flex flex-col items-center justify-center p-6">
         <img
-          src="/fangfang.png"
+          src="/fangfang.webp"
           alt="方方"
           className="w-20 h-20 rounded-xl shadow-md mb-4 object-cover"
         />
@@ -114,7 +114,7 @@ export default function HomeworkPage() {
     return (
       <main className="min-h-screen bg-gradient-to-b from-green-50 to-white flex flex-col items-center justify-center p-6">
         <img
-          src="/fangfang.png"
+          src="/fangfang.webp"
           alt="方方"
           className="w-20 h-20 rounded-xl shadow-md mb-4 object-cover"
         />
@@ -143,7 +143,7 @@ export default function HomeworkPage() {
     <main className="min-h-screen bg-gradient-to-b from-green-50 to-white flex flex-col p-4">
       <div className="flex items-center gap-3 mb-4">
         <img
-          src="/fangfang.png"
+          src="/fangfang.webp"
           alt="方方"
           className="w-10 h-10 rounded-lg shadow-sm object-cover"
         />
@@ -186,7 +186,7 @@ export default function HomeworkPage() {
             <div className="mt-3 bg-green-50 rounded-xl p-4 text-sm">
               <div className="flex gap-2 items-start">
                 <img
-                  src="/fangfang.png"
+                  src="/fangfang.webp"
                   alt="方方"
                   className="w-6 h-6 rounded-md flex-shrink-0 object-cover"
                 />

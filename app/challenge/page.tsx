@@ -125,7 +125,7 @@ export default function ChallengePage() {
               </p>
               <div className="mt-3 flex items-start gap-3">
                 <img
-                  src="/level1-illustration.png"
+                  src="/level1-illustration.webp"
                   alt="衣柜示意图"
                   className="w-1/5 rounded-xl border border-gray-100"
                 />
@@ -136,7 +136,7 @@ export default function ChallengePage() {
             {l1Reply && (
               <>
                 <div className="flex gap-3">
-                  <img src="/fangfang.png" alt="方方"
+                  <img src="/fangfang.webp" alt="方方"
                     className="w-9 h-9 rounded-xl flex-shrink-0 object-cover shadow-sm" />
                   <div className="bg-white rounded-2xl px-4 py-3 text-sm text-gray-800 shadow-sm whitespace-pre-wrap flex-1">
                     {l1Reply}

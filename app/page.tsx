@@ -8,7 +8,7 @@ export default function Home() {
       <div className="text-center mb-10">
         <div className="w-28 h-28 mx-auto mb-4 bg-blue-400 rounded-3xl flex items-center justify-center shadow-lg">
           <img
-            src="/fangfang.png"
+            src="/fangfang.webp"
             alt="方方"
             className="w-28 h-28 rounded-3xl object-cover"
           />

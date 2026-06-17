@@ -116,7 +116,7 @@ export default function MindmapPage() {
           >
             {m.role === "assistant" && (
               <img
-                src="/fangfang.png"
+                src="/fangfang.webp"
                 alt="方方"
                 className="w-10 h-10 rounded-xl flex-shrink-0 shadow-sm object-cover"
               />
@@ -162,7 +162,7 @@ export default function MindmapPage() {
 
             <div className="text-center pt-2 flex items-center justify-center gap-2">
               <img
-                src="/fangfang.png"
+                src="/fangfang.webp"
                 alt="方方"
                 className="w-6 h-6 rounded-md object-cover"
               />
@@ -174,7 +174,7 @@ export default function MindmapPage() {
         {loading && (
           <div className="flex gap-3">
             <img
-              src="/fangfang.png"
+              src="/fangfang.webp"
               alt="方方"
               className="w-10 h-10 rounded-xl shadow-sm object-cover"
             />

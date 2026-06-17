@@ -114,7 +114,7 @@ export default function PreTestPage() {
     return (
       <main className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col items-center p-6 pb-12">
         <img
-          src="/fangfang.png"
+          src="/fangfang.webp"
           alt="方方"
           className="w-16 h-16 rounded-xl shadow-md mb-3 object-cover"
         />
@@ -126,7 +126,7 @@ export default function PreTestPage() {
         {/* 引导语 */}
         <div className="w-full max-w-md bg-blue-50 border border-blue-100 rounded-2xl p-4 mb-4">
           <div className="flex gap-2 items-start">
-            <img src="/fangfang.png" alt="方方" className="w-6 h-6 rounded-md flex-shrink-0 object-cover" />
+            <img src="/fangfang.webp" alt="方方" className="w-6 h-6 rounded-md flex-shrink-0 object-cover" />
             <p className="text-sm text-gray-700 leading-relaxed">{guides[level]}</p>
           </div>
         </div>
@@ -175,7 +175,7 @@ export default function PreTestPage() {
     <main className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col p-4">
       <div className="flex items-center gap-3 mb-4">
         <img
-          src="/fangfang.png"
+          src="/fangfang.webp"
           alt="方方"
           className="w-10 h-10 rounded-lg shadow-sm object-cover"
         />
